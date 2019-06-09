@@ -1,15 +1,36 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { Component } from "react"
 import { Link } from 'gatsby'
 import { StaticQuery, graphql } from "gatsby"
 import { HelmetDatoCms } from 'gatsby-source-datocms'
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
+import Header from "./Header";
 import '../styles/index.sass'
+
+const theme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+    fontSize: 12
+  },
+  text: {
+    primary: "#fff"
+  },
+  palette: {
+    primary: {
+      main: '#ffffff',
+      contrastText: '#fff'
+    },
+    secondary: {
+      main: '#064260'
+    },
+  },
+});
 
 const TemplateWrapper = ({ children }) => (
   <StaticQuery query={graphql`
     query LayoutQuery
     {
+
       datoCmsSite {
         globalSeo {
           siteName
@@ -37,66 +58,58 @@ const TemplateWrapper = ({ children }) => (
           }
         }
       }
+      allDatoCmsFrontpage{
+        edges {
+          node {
+            id
+          }
+        }
+      }
     }
   `}
-  render={data => (
-    <div className="container">
-      <HelmetDatoCms
-        favicon={data.datoCmsSite.faviconMetaTags}
-        seo={data.datoCmsHome.seoMetaTags}
-      />
-      <div className="container__sidebar">
-        <div className="sidebar">
-          <h6 className="sidebar__title">
-            <Link to="/">{data.datoCmsSite.globalSeo.siteName}</Link>
-          </h6>
-          <div
-            className="sidebar__intro"
-            dangerouslySetInnerHTML={{
-              __html: data.datoCmsHome.introTextNode.childMarkdownRemark.html,
-            }}
+    render={data => (
+      <App data={data} /*info={info} menu={menu} social={social} frontpage={frontpage} frontpageNew={frontpageNew} */>
+          <HelmetDatoCms
+            favicon={data.datoCmsSite.faviconMetaTags}
+            seo={data.datoCmsHome.seoMetaTags}
           />
-          <ul className="sidebar__menu">
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/about">About</Link>
-            </li>
-          </ul>
-          <p className="sidebar__social">
-            {data.allDatoCmsSocialProfile.edges.map(({ node: profile }) => (
-              <a
-                key={profile.profileType}
-                href={profile.url}
-                target="blank"
-                className={`social social--${profile.profileType.toLowerCase()}`}
-              > </a>
-            ))}
-          </p>
-          <div className="sidebar__copyright">{data.datoCmsHome.copyright}</div>
-        </div>
-      </div>
-      <div className="container__body">
-        <div className="container__mobile-header">
-          <div className="mobile-header">
-            <div className="mobile-header__menu">
-              <Link to="#" data-js="toggleSidebar" />
-            </div>
-            <div className="mobile-header__logo">
-              <Link to="/">{data.datoCmsSite.globalSeo.siteName}</Link>
-            </div>
-          </div>
-        </div>
-        {children}
-      </div>
-    </div>
+            {children}
+      </App>
     )}
   />
 )
 
-TemplateWrapper.propTypes = {
-  children: PropTypes.object,
-}
 
 export default TemplateWrapper
+
+
+class App extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      scroll: 0
+    }
+    this.updateDimensions = this.updateDimensions.bind(this);
+  }
+  componentDidMount() {
+    window.addEventListener('scroll', this.updateDimensions);
+  }
+  updateDimensions() {
+    this.setState({
+      scroll: window.pageYOffset
+    })
+  }
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.updateDimensions);
+  }
+  render() {
+    console.log(this.props.data)
+    return (
+      <MuiThemeProvider theme={theme}>
+        <Header info={this.props.data.datoCmsSite} social={this.props.data.allDatoCmsSocialProfile} scroll={this.state.scroll} isHome={true} />
+        {this.props.children}
+        {/* <Home frontpage={this.props.frontpage} info={this.props.info} header="lottie" /> */}
+      </MuiThemeProvider>
+    )
+  }
+}
