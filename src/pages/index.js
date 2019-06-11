@@ -31,6 +31,8 @@ export const query = graphql`
         header {
           ... on DatoCmsHeroVideo {
             description
+            url
+            videoUrl
             video {
               height
               provider
