@@ -1,13 +1,11 @@
 import React from 'react'
-import { Link, graphql } from 'gatsby'
+import { graphql } from 'gatsby'
 import Masonry from 'react-masonry-component'
-import Img from 'gatsby-image'
 import Layout from "../components/layout"
-import { homedir } from 'os';
 import Home from "../components/Home"
 
 const IndexPage = ({ data }) => (
-  <Layout>
+  <Layout translucentNav={true}>
     <Masonry className="showcase">
       <Home data={data} />
     </Masonry>
@@ -18,7 +16,8 @@ export default IndexPage
 
 export const query = graphql`
   query IndexQuery {
-            allDatoCmsFrontpage {
+  
+    allDatoCmsFrontpage {
     edges {
       node {
         header {
@@ -44,6 +43,9 @@ export const query = graphql`
           }
           ... on DatoCmsHeroImage {
             description
+            title
+            column
+            columns
             image {
               id
               size
@@ -57,10 +59,21 @@ export const query = graphql`
               hex
               red
             }
+            textcolor {
+              alpha
+              blue
+              green
+              hex
+              red
+            }
             showButton
           }
           ... on DatoCmsHeroAnimation {
-            description
+            descriptionNode{
+              childMarkdownRemark{
+                html
+              }
+            }
             animation
             color {
               alpha
@@ -75,7 +88,7 @@ export const query = graphql`
       }
     }
   }
-    allDatoCmsArticleVideo {
+    allDatoCmsVideo {
     edges {
       node {
         title
@@ -91,20 +104,5 @@ export const query = graphql`
       }
     }
   }
-    allDatoCmsWork(sort: { fields: [position], order: ASC }) {
-      edges {
-        node {
-          id
-          title
-          slug
-          excerpt
-          coverImage {
-            fluid(maxWidth: 450, imgixParams: { fm: "jpg", auto: "compress" }) {
-              ...GatsbyDatoCmsSizes
-            }
-          }
-        }
-      }
-    }
   }
 `

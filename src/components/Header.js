@@ -7,6 +7,7 @@ import AppBar from '@material-ui/core/AppBar';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import MoreIcon from '@material-ui/icons/MoreHoriz';
+import MailIcon from '@material-ui/icons/MailOutline';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Hidden from '@material-ui/core/Hidden';
@@ -22,13 +23,12 @@ class Header extends Component {
     }
   }
   render() {
-    console.log(this.props)
     return (
       <Grid container justify="center" alignItems="center">
         <AppBar
           position="fixed"
           color="default"
-          className={this.props.scroll < 100 ? "animatedNav transparent" : "animatedNav filled"}
+          className={this.props.scroll < 100 && this.props.translucentNav === true ? "animatedNav transparent" : "animatedNav filled"}
           style={{
             boxShadow: "0px -50px 20px 20px white",
             paddingTop: 4,
@@ -88,10 +88,14 @@ class Header extends Component {
                           this.props.social.edges.map((item, i) =>
                               item.node.profileType === "Instagram" ?
                               <a href={item.node.url} key={i}>
-                                <img style={{ width: "16px", paddingTop: 13, float: "right", transform: "translateX(8px)" }} alt={item.node.profileType}></img>
+                                <img src={"instagram.svg"} style={{ width: "16px", paddingTop: 13, float: "right", transform: "translateX(8px)" }} alt={item.node.profileType}></img>
                                 </a>
                                 
-                                :
+                              : item.node.profileType === "Email" ?
+                                <a href={item.node.url} key={i}>
+                                  <MailIcon style={{ paddingTop: 10, float: "right", color: "black", border: "0.1px" }} alt={item.node.profileType} />
+                                </a>
+                              :
                               <Button to={item.node.url} key={i}>
                                   {item.node.profileType}
                                 </Button>
@@ -147,7 +151,7 @@ class Header extends Component {
                             this.props.social.edges.map((item, i) =>
                               item.node.profileType === "Instagram" ?
                                 <MenuItem href={item.node.url} key={i}>
-                                  <img style={{ width: "16px", paddingTop: 13, float: "right", transform: "translateX(8px)" }}></img>
+                                  <img src={"instagram.svg"} style={{ width: "16px", paddingTop: 13, float: "right", transform: "translateX(8px)" }}></img>
                                 </MenuItem>
 
                                 :

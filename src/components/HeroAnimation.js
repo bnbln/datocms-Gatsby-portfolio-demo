@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography';
 
 
 
-class Lottie extends Component {
+class HeroAnimation extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -41,34 +41,39 @@ class Lottie extends Component {
   render() {
     console.log(this.props)
     return (
-      <Grid container justify="center" alignItems="center" style={{ height: "100vh" }}>
+      <Grid container justify="center" alignItems="center" style={{ height: "100vh", position: "relative" }}>
         <Grid item xs={11} sm={6} md={4} lg={3} xl={2} style={{
           position: "absolute",
           zIndex: 100,
           textAlign: "center",
-
+          color: this.props.item.color != null ? this.props.item.color.hex : "inherit"
         }}>
           <Slide direction="up" in={this.state.isMounted} mountOnEnter unmountOnExit>
             <Typography variant="h2" gutterBottom>
-              {this.props.item.description}
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: this.props.item.descriptionNode.childMarkdownRemark.html
+                }}
+              />
             </Typography>
           </Slide>
-          <Slide direction="up" in={this.state.isMounted} {...(this.state.isMounted ? { timeout: 500 } : {})} mountOnEnter unmountOnExit>
-            <IconButton onClick={() => {
-              window.scrollTo({
-                top: window.innerHeight - 50,
-                behavior: 'smooth'
-              });
-            }}>
-              <KeyboardArrowDown style={{
-                transform: "scale(2)",
-              }} />
-            </IconButton>
-          </Slide>
-
-
+          {this.props.item.showButton ? 
+            <Slide direction="up" in={this.state.isMounted} {...(this.state.isMounted ? { timeout: 500 } : {})} mountOnEnter unmountOnExit>
+              <IconButton onClick={() => {
+                window.scrollTo({
+                  top: window.pageYOffset + window.innerHeight ,
+                  behavior: 'smooth'
+                });
+              }}>
+                <KeyboardArrowDown style={{
+                  transform: "scale(2)",
+                  color: this.props.item.color != null ? this.props.item.color.hex : "inherit"
+                }} />
+              </IconButton>
+            </Slide>
+          : null}
         </Grid>
-        <Grid item xs={12} id="animationContainer1" style={{ height: "100vh" }}>
+        <Grid item xs={12} id="animationContainer1" style={{ height: "100vh", position: "absolute", top: 0, left: 0 }}>
 
         </Grid>
       </Grid>
@@ -76,4 +81,4 @@ class Lottie extends Component {
   }
 }
 
-export default Lottie;
+export default HeroAnimation;

@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import Grid from '@material-ui/core/Grid';
-
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import KeyboardArrowDown from "@material-ui/icons/KeyboardArrowDown";
-
 import Slide from '@material-ui/core/Slide';
 
-class HeroVideo extends Component {
+
+
+
+class HeroImage extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -21,39 +22,49 @@ class HeroVideo extends Component {
     this.state.isMounted = false
   }
   render() {
-    console.log("HeroVideo:", this.props)
+    console.log("HeroImage:", this.props)
     return (
       <Grid item xs={12} style={{ overflow: "hidden" }}>
         <Grid container justify="center" alignItems="center" spacing={3} style={{
+          backgroundColor: this.props.item.color != null ? this.props.item.color.hex : "#33A4FF",
+          backgroundImage:
+            this.props.item.image != null ?
+              this.props.item.image[0] ?
+                "url(" + this.props.item.image[0].url + ")"
+                : "none"
+            : "none",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
           minHeight: "calc(100vh + 25px)",
-          color: this.props.item.color != null ? this.props.item.color.hex : "white",
-          textAlign: "center",
-          position: "relative"
+          color: this.props.item.textcolor != null ? this.props.item.textcolor.hex : "white",
+          textAlign: this.props.item.columns === true ? "left" : "center"
         }}>
-          <iframe style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%"
-          }}
-            src={"https://www.youtube.com/embed/vRAA8AtRqdM" + this.props.item.video.providerUid + "?& autoplay=1"}
-          frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-        />
-          <Grid item xs={11} sm={8} md={4} style={{
-            zIndex: 10
-          }}>
+          <Grid item xs={11} sm={8} md={4}>
             <Slide direction="up" in={this.state.isMounted} mountOnEnter unmountOnExit>
+              <Typography variant="h1" component="h2" gutterBottom>
+                {this.props.item.title}
+              </Typography>
+            </Slide>
+            <Slide direction="up" in={this.state.isMounted} {...(this.state.isMounted ? { timeout: 500 } : {})} mountOnEnter unmountOnExit>
               <Typography variant="h2" gutterBottom>
                 {this.props.item.description}
               </Typography>
             </Slide>
           </Grid>
+          {this.props.item.columns  ? 
+            <Grid item xs={11} sm={8} md={4}>
+              <Slide direction="up" in={this.state.isMounted} {...(this.state.isMounted ? { timeout: 1000 } : {})} mountOnEnter unmountOnExit>
+                <Typography variant="h3" gutterBottom>
+                  {this.props.item.column}
+                </Typography>
+              </Slide>
+            </Grid>
+            : null}
           {this.props.item.showButton ?
             <Grid item xs={12} style={{
               textAlign: "center"
             }}>
-              <Slide direction="up" in={this.state.isMounted} {...(this.state.isMounted ?  { timeout: 1000 } : {})} mountOnEnter unmountOnExit>
+              <Slide direction="up" in={this.state.isMounted} {...(this.state.isMounted ? this.props.item.columns ? { timeout: 1500 } : { timeout: 1000 } : {})} mountOnEnter unmountOnExit>
                 <IconButton onClick={() => {
                   window.scrollTo({
                     top: window.pageYOffset + window.innerHeight,
@@ -68,7 +79,7 @@ class HeroVideo extends Component {
               </Slide>
             </Grid>
             : null}
-
+          
         </Grid>
       </Grid>
 
@@ -76,5 +87,5 @@ class HeroVideo extends Component {
   }
 }
 
-export default HeroVideo
+export default HeroImage
 

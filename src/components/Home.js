@@ -1,21 +1,9 @@
 import React, { Component } from 'react';
 import Grid from '@material-ui/core/Grid';
-import Lottie from "./Lottie"
+import HeroAnimation from "./HeroAnimation"
 import HeroVideo from "./HeroVideo"
-
-
-// this goes to feed
-import Typography from '@material-ui/core/Typography';
 import Modal from '@material-ui/core/Modal';
-import Button from '@material-ui/core/Button';
-import { maxHeight } from '@material-ui/system';
-import Img from "gatsby-image"
-import IconButton from '@material-ui/core/IconButton';
-import KeyboardArrowDown from "@material-ui/icons/KeyboardArrowDown";
-
-
-
-
+import HeroImage from './HeroImage';
 
 class Home extends Component {
   constructor(props) {
@@ -27,16 +15,13 @@ class Home extends Component {
     this.handleClick = this.handleClick.bind(this)
   }
   handleClick(item) {
-    console.log(item.title)
     this.setState({
       open: !this.state.open,
       active: item
     })
   }
   render() {
-    console.log("Home:", this.props)
     var active = this.state.active
-    console.log("active:", active)
     return (
       <Grid container justify="center" alignItems="center" style={{
         overflow: "hidden"
@@ -44,50 +29,23 @@ class Home extends Component {
         <Grid item xs={12}>
           {this.props.data.allDatoCmsFrontpage.edges[0].node.header.map((item, i) =>
             item.__typename === "DatoCmsHeroVideo" ?
-              <HeroVideo item={item} key={i} />
-            : item.__typename === "DatoCmsHeroImage" ?
-              <img></img>
+                <HeroVideo item={item} key={"video"+i} />
+              : item.__typename === "DatoCmsHeroImage" ?
+                <HeroImage item={item} key={"image" + i} />
             : item.__typename === "DatoCmsHeroAnimation" ?
-              <Lottie item={item} key={i} />
+                 <HeroAnimation item={item} key={"animation"+i} />
             : null
-          )}
-
-          
-        </Grid>
-        <Grid item xs={12} style={{ overflow: "hidden" }}>
-          <Grid container justify="center" alignItems="center" spacing={3} style={{ backgroundColor: "#33a4ff", minHeight: "100vh" }}>
-            <Grid item xs={11} sm={8} md={4}>
-              <Typography variant="h1" component="h2" gutterBottom>
-                h1. Heading
-      </Typography>
-              <Typography variant="h2" gutterBottom>
-                h2. Heading
-      </Typography>
-
-            </Grid>
-            <Grid item xs={11} sm={8} md={4}>
-              <Typography variant="h3" gutterBottom>
-                h3. Heading
-      </Typography>
-              <Typography variant="h4" gutterBottom>
-                h4. Heading
-      </Typography>
-              <Typography variant="h5" gutterBottom>
-                h5. Heading
-      </Typography>
-            </Grid>
-          </Grid>
+          )}          
         </Grid>
         <Grid item xs={11} style={{
           marginTop: 75
         }}>
           <Grid container justify="center" alignItems="center" spacing={2}>
-            {this.props.data.allDatoCmsArticleVideo.edges.map((item, i) =>
+            {this.props.data.allDatoCmsVideo.edges.map((item, i) =>
                 <Grid item xs={12} sm={6} md={6} xl={4} key={i} onClick={() => this.handleClick(item.node)}>
                   <FeedImage item={item.node} />
                 </Grid>
             )}
-
           </Grid>
           <Grid container justify="center" alignItems="center" style={{
             maxHeight: "100vh",
@@ -101,8 +59,7 @@ class Home extends Component {
                   width: "auto",
                   margin: "1rem",
                   height: "100vh"
-                }}
-              >
+                }}>
                 <div style={{
                   width: "fit-content",
                   margin: "auto",
@@ -143,7 +100,6 @@ class FeedImage extends Component {
     }
   }
   render() {
-    console.log("Feedimage:", this.props)
     return (
       <div style={{
         // backgroundImage: "url(" + this.props.localFile.childImageSharp.fluid.srcWebp + ")",

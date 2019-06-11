@@ -1,5 +1,4 @@
 import React, { Component } from "react"
-import { Link } from 'gatsby'
 import { StaticQuery, graphql } from "gatsby"
 import { HelmetDatoCms } from 'gatsby-source-datocms'
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
@@ -26,9 +25,23 @@ const theme = createMuiTheme({
   },
 });
 
-const TemplateWrapper = ({ children }) => (
-  <StaticQuery query={graphql`
-    query LayoutQuery
+
+const TemplateWrapper = ({ data, children, ...props }) => (
+  <App data={data} translucentNav={props.translucentNav}>
+    {console.log(data)}
+    <HelmetDatoCms
+      favicon={data.datoCmsSite.faviconMetaTags}
+      // seo={data.datoCmsFrontpage.seo}
+    />
+    {children}
+  </App>
+)
+
+
+export default props => (
+  <StaticQuery
+    query={graphql`
+          query LayoutQuery
     {
 
       datoCmsSite {
@@ -39,17 +52,6 @@ const TemplateWrapper = ({ children }) => (
           ...GatsbyDatoCmsFaviconMetaTags
         }
       }
-      datoCmsHome {
-        seoMetaTags {
-          ...GatsbyDatoCmsSeoMetaTags
-        }
-        introTextNode {
-          childMarkdownRemark {
-            html
-          }
-        }
-        copyright
-      }
       allDatoCmsSocialProfile(sort: { fields: [position], order: ASC }) {
         edges {
           node {
@@ -58,29 +60,32 @@ const TemplateWrapper = ({ children }) => (
           }
         }
       }
-      allDatoCmsFrontpage{
-        edges {
-          node {
-            id
-          }
+      datoCmsFrontpage {
+    seo {
+      title
+      description
+      twitterCard
+    }
+    feed {
+      ... on DatoCmsChronologisch {
+        id
+        projects
+      }
+      ... on DatoCmsKuratiert {
+        id
+        elements {
+          id
+          title
+          
         }
       }
     }
-  `}
-    render={data => (
-      <App data={data} /*info={info} menu={menu} social={social} frontpage={frontpage} frontpageNew={frontpageNew} */>
-          <HelmetDatoCms
-            favicon={data.datoCmsSite.faviconMetaTags}
-            seo={data.datoCmsHome.seoMetaTags}
-          />
-            {children}
-      </App>
-    )}
+  }
+    }
+    `}
+    render={data => <TemplateWrapper data={data} {...props} />}
   />
 )
-
-
-export default TemplateWrapper
 
 
 class App extends Component {
@@ -103,12 +108,14 @@ class App extends Component {
     window.removeEventListener("scroll", this.updateDimensions);
   }
   render() {
-    console.log(this.props.data)
     return (
       <MuiThemeProvider theme={theme}>
-        <Header info={this.props.data.datoCmsSite} social={this.props.data.allDatoCmsSocialProfile} scroll={this.state.scroll} isHome={true} />
-        {this.props.children}
-        {/* <Home frontpage={this.props.frontpage} info={this.props.info} header="lottie" /> */}
+        <Header info={this.props.data.datoCmsSite} social={this.props.data.allDatoCmsSocialProfile} scroll={this.state.scroll} translucentNav={this.props.translucentNav} />
+        <div style={{
+          marginTop: this.props.translucentNav ? 0 : 50
+        }}>
+          {this.props.children}
+        </div>
       </MuiThemeProvider>
     )
   }
