@@ -1,11 +1,13 @@
 import React from 'react'
 import { graphql } from 'gatsby'
+import { HelmetDatoCms } from 'gatsby-source-datocms'
 import Masonry from 'react-masonry-component'
 import Layout from "../components/layout"
 import Home from "../components/Home"
 
 const IndexPage = ({ data }) => (
   <Layout translucentNav={true}>
+    <HelmetDatoCms seo={data.allDatoCmsFrontpage.edges[0].node.seoMetaTags} />
     <Masonry className="showcase">
       <Home data={data} />
     </Masonry>
@@ -20,6 +22,12 @@ export const query = graphql`
     allDatoCmsFrontpage {
     edges {
       node {
+        seoMetaTags {
+          tags {
+            tagName
+            content
+          }
+        }
         header {
           ... on DatoCmsHeroVideo {
             description
