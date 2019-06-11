@@ -73,7 +73,7 @@ class HeroAnimation extends Component {
             </Slide>
           : null}
         </Grid>
-        <Grid item xs={12} id="animationContainer1" style={{ height: "100vh", position: "absolute", top: 0, left: 0 }}>
+        <Grid item xs={12} id="animationContainer1" style={{ height: "100vh", position: "absolute", top: 0, left: 0, width: "100%" }}>
 
         </Grid>
       </Grid>
